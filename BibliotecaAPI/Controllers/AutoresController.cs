@@ -29,8 +29,9 @@ namespace BibliotecaAPI.Controllers
         }
 
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<Autor>> Get(int id)
+        [HttpGet("{id:int}")]  //api/autores/id?incluirLibros=true|false
+        //public async Task<ActionResult<Autor>> Get([FromRoute]int id, [FromQuery] bool incluirLibros)
+        public async Task<ActionResult<Autor>> Get([FromRoute]int id, [FromHeader] bool incluirLibros)
         {
             var autor = await context.Autores
                 .Include(x => x.Libros)
@@ -58,7 +59,7 @@ namespace BibliotecaAPI.Controllers
         //}
 
         [HttpPost]
-        public async Task<ActionResult> Post(Autor autor)
+        public async Task<ActionResult> Post([FromBody] Autor autor)
         {
             context.Add(autor);
             await context.SaveChangesAsync();
