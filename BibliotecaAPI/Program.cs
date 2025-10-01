@@ -13,7 +13,8 @@ builder.Services.AddSingleton<ServicioSingleton>();
 
 
 //builder.Services.AddTransient<IRepositorioValores, RepositorioValores>();
-builder.Services.AddTransient<IRepositorioValores, RepositorioValoresOracle>();
+//builder.Services.AddTransient<IRepositorioValores, RepositorioValoresOracle>();
+builder.Services.AddSingleton<IRepositorioValores, RepositorioValoresOracle>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
