@@ -45,11 +45,17 @@ namespace BibliotecaAPI.Controllers
 
         }
 
-        [HttpGet("{parametro1}/{parametros2?}")]
-        public ActionResult Get(string parametro1, string parametros2 = "Valor por defecto")
+        [HttpGet("{nombre:alpha}")]
+        public async Task<IEnumerable<Autor>> Get(string nombre)
         {
-            return Ok(new { parametro1, parametros2 });
+            return await context.Autores.Where(x => x.Nombre.Contains(nombre)).ToListAsync();
         }
+
+        //[HttpGet("{parametro1}/{parametros2?}")]
+        //public ActionResult Get(string parametro1, string parametros2 = "Valor por defecto")
+        //{
+        //    return Ok(new { parametro1, parametros2 });
+        //}
 
         [HttpPost]
         public async Task<ActionResult> Post(Autor autor)
