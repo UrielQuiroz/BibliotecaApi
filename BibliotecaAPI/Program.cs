@@ -26,29 +26,9 @@ var app = builder.Build();
 
 //Area de middlewares
 
-app.Use(async (contexto, next) =>
-{
-    //Cuando viene la peticion
-    var logger = contexto.RequestServices.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation($"Peticion: {contexto.Request.Method} {contexto.Request.Path}");
+app.UseLogueaPeticion();
 
-    await next.Invoke();
-
-    logger.LogInformation($"Respuesta: {contexto.Response.StatusCode}");
-});
-
-app.Use(async (contexto, next) =>
-{
-    if (contexto.Request.Path == "/bloqueado")
-    {
-        contexto.Response.StatusCode = 403;
-        await contexto.Response.WriteAsync("Acceso denegado");
-    }
-    else
-    {
-        await next.Invoke();
-    }
-});
+app.UseBloqueaPeticion();
 
 app.MapControllers();
 
