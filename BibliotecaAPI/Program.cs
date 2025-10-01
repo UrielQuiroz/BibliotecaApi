@@ -7,6 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 //Area de servicios
 
+builder.Services.AddTransient<ServicioTransient>();
+builder.Services.AddScoped<ServicioScoped>();
+builder.Services.AddSingleton<ServicioSingleton>();
+
+
 //builder.Services.AddTransient<IRepositorioValores, RepositorioValores>();
 builder.Services.AddTransient<IRepositorioValores, RepositorioValoresOracle>();
 
