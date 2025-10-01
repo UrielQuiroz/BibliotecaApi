@@ -7,7 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 //Area de servicios
 
-builder.Services.AddTransient<RepositorioValores>();
+//builder.Services.AddTransient<IRepositorioValores, RepositorioValores>();
+builder.Services.AddTransient<IRepositorioValores, RepositorioValoresOracle>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);

@@ -7,9 +7,9 @@ namespace BibliotecaAPI.Controllers
     [Route("api/valores")]
     public class ValoresController : ControllerBase
     {
-        private readonly RepositorioValores repositorioValores;
+        private readonly IRepositorioValores repositorioValores;
 
-        public ValoresController(RepositorioValores repositorioValores)
+        public ValoresController(IRepositorioValores repositorioValores)
         {
             this.repositorioValores = repositorioValores;
         }

@@ -2,7 +2,7 @@
 
 namespace BibliotecaAPI
 {
-    public class RepositorioValores
+    public class RepositorioValores : IRepositorioValores
     {
         public IEnumerable<Valor> ObtenerValores()
         {
