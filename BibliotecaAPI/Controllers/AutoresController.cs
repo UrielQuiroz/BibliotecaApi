@@ -10,36 +10,22 @@ namespace BibliotecaAPI.Controllers
     public class AutoresController : ControllerBase
     {
         private readonly ApplicationDbContext context;
-        private readonly ILogger<AutoresController> logger;
 
-        public AutoresController(ApplicationDbContext context, ILogger<AutoresController> logger)
+        public AutoresController(ApplicationDbContext context)
         {
             this.context = context;
-            this.logger = logger;
         }
-        [HttpGet("/listado-de-autores")]
+
         [HttpGet]
         public async Task<IEnumerable<Autor>> Get()
         {
-            logger.LogTrace("Obteniendo el listado de autores");
-            logger.LogDebug("Obteniendo el listado de autores");
-            logger.LogInformation("Obteniendo el listado de autores");
-            logger.LogWarning("Obteniendo el listado de autores");
-            logger.LogError("Obteniendo el listado de autores");
-            logger.LogCritical("Obteniendo el listado de autores");
             return await context.Autores.ToListAsync();
         }
 
-        [HttpGet("primero")]
-        public async Task<Autor> GetPrimerAutor()
-        {
-            return await context.Autores.FirstAsync();
-        }
 
-
-        [HttpGet("{id:int}")]  //api/autores/id?incluirLibros=true|false
+        [HttpGet("{id:int}")]  //api/autores/id
         //public async Task<ActionResult<Autor>> Get([FromRoute]int id, [FromQuery] bool incluirLibros)
-        public async Task<ActionResult<Autor>> Get([FromRoute]int id, [FromHeader] bool incluirLibros)
+        public async Task<ActionResult<Autor>> Get([FromRoute]int id)
         {
             var autor = await context.Autores
                 .Include(x => x.Libros)
@@ -53,18 +39,6 @@ namespace BibliotecaAPI.Controllers
             return autor;
 
         }
-
-        [HttpGet("{nombre:alpha}")]
-        public async Task<IEnumerable<Autor>> Get(string nombre)
-        {
-            return await context.Autores.Where(x => x.Nombre.Contains(nombre)).ToListAsync();
-        }
-
-        //[HttpGet("{parametro1}/{parametros2?}")]
-        //public ActionResult Get(string parametro1, string parametros2 = "Valor por defecto")
-        //{
-        //    return Ok(new { parametro1, parametros2 });
-        //}
 
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] Autor autor)
