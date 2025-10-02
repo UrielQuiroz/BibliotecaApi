@@ -21,6 +21,7 @@ namespace BibliotecaAPI.Utilidades
                 );
 
             CreateMap<AutorCreateDTO, Autor>();
+            CreateMap<Autor, AutorPatchDTO>().ReverseMap();
 
             CreateMap<Libro, LibroDTO>();
             CreateMap<LibroCreateDTO, Libro>();
