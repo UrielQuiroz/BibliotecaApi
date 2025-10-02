@@ -1,4 +1,6 @@
-﻿using BibliotecaAPI.Datos;
+﻿using AutoMapper;
+using BibliotecaAPI.Datos;
+using BibliotecaAPI.DTOs;
 using BibliotecaAPI.Entidades;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,22 +12,25 @@ namespace BibliotecaAPI.Controllers
     public class AutoresController : ControllerBase
     {
         private readonly ApplicationDbContext context;
+        private readonly IMapper mapper;
 
-        public AutoresController(ApplicationDbContext context)
+        public AutoresController(ApplicationDbContext context, IMapper mapper)
         {
             this.context = context;
+            this.mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Autor>> Get()
+        public async Task<IEnumerable<AutorDTO>> Get()
         {
-            return await context.Autores.ToListAsync();
+            var autores = await context.Autores.ToListAsync();
+            var autoresDTO = mapper.Map<IEnumerable<AutorDTO>>(autores);
+            return autoresDTO;
         }
 
 
         [HttpGet("{id:int}", Name = "ObtenerAutor"),]  //api/autores/id
-        //public async Task<ActionResult<Autor>> Get([FromRoute]int id, [FromQuery] bool incluirLibros)
-        public async Task<ActionResult<Autor>> Get(int id)
+        public async Task<ActionResult<AutorDTO>> Get(int id)
         {
             var autor = await context.Autores
                 .Include(x => x.Libros)
@@ -36,24 +41,27 @@ namespace BibliotecaAPI.Controllers
                 return NotFound();
             }
 
-            return autor;
+            var autorDTO = mapper.Map<AutorDTO>(autor);
+
+            return autorDTO;
 
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] Autor autor)
+        public async Task<ActionResult> Post(AutorCreateDTO autorCreateDTO)
         {
+            var autor = mapper.Map<Autor>(autorCreateDTO);
             context.Add(autor);
             await context.SaveChangesAsync();
-            return CreatedAtRoute("ObtenerAutor", new { id = autor.Id}, autor);
+            var autorDTO = mapper.Map<AutorDTO>(autor);
+            return CreatedAtRoute("ObtenerAutor", new { id = autor.Id}, autorDTO);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, Autor autor)
+        public async Task<ActionResult> Put(int id, AutorCreateDTO autorCreateDTO)
         {
-            if (id != autor.Id) {
-                return BadRequest("Los ids deben de coincidir");
-            }
+            var autor = mapper.Map<Autor>(autorCreateDTO);
+            autor.Id = id;
 
             context.Update(autor);
             await context.SaveChangesAsync();

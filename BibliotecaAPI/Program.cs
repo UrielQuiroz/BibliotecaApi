@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 //Area de servicios
 
+builder.Services.AddAutoMapper(typeof(Program));
+
 builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
