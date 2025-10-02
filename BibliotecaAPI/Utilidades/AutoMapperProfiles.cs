@@ -15,6 +15,9 @@ namespace BibliotecaAPI.Utilidades
                 );
 
             CreateMap<AutorCreateDTO, Autor>();
+
+            CreateMap<Libro, LibroDTO>();
+            CreateMap<LibroCreateDTO, Libro>();
         }
     }
 }
