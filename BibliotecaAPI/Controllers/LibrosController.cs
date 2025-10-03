@@ -29,10 +29,11 @@ namespace BibliotecaAPI.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObtenerLibro")]
-        public async Task<ActionResult<LibrosConAutorDTO>> Get(int id)
+        public async Task<ActionResult<LibroConAutoresDTO>> Get(int id)
         {
             var libro = await context.Libros
                 .Include(x => x.Autores)
+                    .ThenInclude(x => x.Autor)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             if (libro is null)
@@ -40,7 +41,7 @@ namespace BibliotecaAPI.Controllers
                 return NotFound();
             }
 
-            var libroDTO = mapper.Map<LibrosConAutorDTO>(libro);
+            var libroDTO = mapper.Map<LibroConAutoresDTO>(libro);
 
             return libroDTO;
 
