@@ -38,6 +38,9 @@ namespace BibliotecaAPI.Utilidades
                 .ForMember(dto => dto.Id, config => config.MapFrom(ent => ent.AutorId))
                 .ForMember(dto => dto.NombreCompleto, config => config.MapFrom(ent => MapearNombreYApellidoAutor(ent.Autor!)));
 
+            CreateMap<LibroCreateDTO, AutorLibro>()
+                .ForMember(ent => ent.Libro, config => config.MapFrom(dto => new Libro { Titulo = dto.Titulo }));
+
             CreateMap<ComentarioCreateDTO, Comentario>();
             CreateMap<Comentario, ComentarioDTO>();
             CreateMap<ComentarioPatchDTO, Comentario>().ReverseMap();
