@@ -38,7 +38,8 @@ namespace BibliotecaAPI.Controllers
         [HttpGet("obtener-todos")]
         public ActionResult GetAll()
         {
-            var hijos = seccion_2.GetChildren().Select(x => $"{x.Key}: {x.Value}");
+            //var hijos = configuration.GetChildren().Select(x => $"{x.Key}: {x.Value}");
+            var hijos = seccion_1.GetChildren().Select(x => $"{x.Key}: {x.Value}");
 
             return Ok(new { hijos });
         }
