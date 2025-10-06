@@ -7,10 +7,40 @@ namespace BibliotecaAPI.Controllers
     public class ConfiguracionesController : ControllerBase
     {
         private readonly IConfiguration configuration;
+        private readonly IConfigurationSection seccion_1;
+        private readonly IConfigurationSection seccion_2;
 
         public ConfiguracionesController(IConfiguration configuration)
         {
             this.configuration = configuration;
+            seccion_1 = configuration.GetSection("seccion_1");
+            seccion_2 = configuration.GetSection("seccion_2");
+        }
+
+        [HttpGet("seccion_01")]
+        public ActionResult GetSeccion01()
+        {
+            var nombre = seccion_1["jugador"];
+            var edad = seccion_1["edad"];
+
+            return Ok( new { nombre, edad });
+        }
+
+        [HttpGet("seccion_02")]
+        public ActionResult GetSeccion02()
+        {
+            var nombre = seccion_2["jugador"];
+            var edad = seccion_2["edad"];
+
+            return Ok(new { nombre, edad });
+        }
+
+        [HttpGet("obtener-todos")]
+        public ActionResult GetAll()
+        {
+            var hijos = seccion_2.GetChildren().Select(x => $"{x.Key}: {x.Value}");
+
+            return Ok(new { hijos });
         }
 
         [HttpGet]
