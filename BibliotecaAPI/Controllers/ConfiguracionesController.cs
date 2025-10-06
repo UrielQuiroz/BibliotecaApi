@@ -44,6 +44,13 @@ namespace BibliotecaAPI.Controllers
             return Ok(new { hijos });
         }
 
+        [HttpGet("proveedor")]
+        public ActionResult GetProveedor()
+        {
+            var valor = configuration.GetValue<string>("ambiente");
+            return Ok(new { valor });
+        }
+
         [HttpGet]
         public ActionResult<string> Get()
         {
