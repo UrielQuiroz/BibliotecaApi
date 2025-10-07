@@ -9,16 +9,24 @@ namespace BibliotecaAPI.Controllers
     public class ConfiguracionesController : ControllerBase
     {
         private readonly IConfiguration configuration;
+        private readonly PagosProcesamiento pagosProcesamiento;
         private readonly PersonaOpciones _opcionesPersona;
         private readonly IConfigurationSection seccion_1;
         private readonly IConfigurationSection seccion_2;
 
-        public ConfiguracionesController(IConfiguration configuration, IOptionsSnapshot<PersonaOpciones> opcionesPersona)
+        public ConfiguracionesController(IConfiguration configuration, IOptionsSnapshot<PersonaOpciones> opcionesPersona, PagosProcesamiento pagosProcesamiento)
         {
             this.configuration = configuration;
+            this.pagosProcesamiento = pagosProcesamiento;
             seccion_1 = configuration.GetSection("seccion_1");
             seccion_2 = configuration.GetSection("seccion_2");
             _opcionesPersona = opcionesPersona.Value;
+        }
+
+        [HttpGet("opciones-tarifas")]
+        public ActionResult GetTarifas()
+        {
+            return Ok(pagosProcesamiento.ObtenerTarifas());
         }
 
         [HttpGet("seccion-1-opciones")]

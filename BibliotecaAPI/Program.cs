@@ -17,6 +17,13 @@ builder.Services.AddOptions<PersonaOpciones>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services.AddOptions<TarifaOpciones>()
+    .Bind(builder.Configuration.GetSection(TarifaOpciones.Seccion))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+builder.Services.AddSingleton<PagosProcesamiento>();
+
 builder.Services.AddAutoMapper(typeof(Program));
 
 //builder.Services.AddControllers().AddJsonOptions(options =>
