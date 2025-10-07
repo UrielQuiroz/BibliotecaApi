@@ -5,7 +5,17 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var diccionarioConfiguraciones = new Dictionary<string, string>
+{
+    {"ambiente", "Un diccionario en memoria" }
+};
+
 //Area de servicios
+
+builder.Services.AddOptions<PersonaOpciones>()
+    .Bind(builder.Configuration.GetSection(PersonaOpciones.Seccion))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
