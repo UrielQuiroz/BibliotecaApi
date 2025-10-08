@@ -19,7 +19,7 @@ namespace BibliotecaAPI.Servicios
 
             if (emailClaim == null)
             {
-                return null
+                return null;
             }
 
             var email = emailClaim.Value;
