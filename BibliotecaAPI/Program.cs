@@ -50,6 +50,11 @@ builder.Services.AddAuthentication().AddJwtBearer(option =>
 
 #endregion
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("esadmin", politica => politica.RequireClaim("esadmin"));
+});
+
 var app = builder.Build();
 
 //Area de middlewares

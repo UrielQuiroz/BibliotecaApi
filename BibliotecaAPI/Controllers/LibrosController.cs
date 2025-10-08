@@ -11,7 +11,7 @@ namespace BibliotecaAPI.Controllers
 {
     [ApiController]
     [Route("api/libros")]
-    [Authorize]
+    [Authorize(Policy = "esadmin")]
     public class LibrosController : Controller
     {
         private readonly ApplicationDbContext context;

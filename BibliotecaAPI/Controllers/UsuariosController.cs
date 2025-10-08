@@ -12,7 +12,6 @@ namespace BibliotecaAPI.Controllers
 {
     [ApiController]
     [Route("api/usuarios")]
-    [Authorize]
     public class UsuariosController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;
@@ -33,7 +32,6 @@ namespace BibliotecaAPI.Controllers
         }
 
         [HttpPost("registro")]
-        [AllowAnonymous]
         public async Task<ActionResult<RespuestaAutenticacionDTO>> Registrar(CredencialesUsuariosDTO credencialesUsuariosDTO)
         {
             var usuario = new IdentityUser
@@ -60,7 +58,6 @@ namespace BibliotecaAPI.Controllers
         }
 
         [HttpPost("login")]
-        [AllowAnonymous]
         public async Task<ActionResult<RespuestaAutenticacionDTO>> Login(CredencialesUsuariosDTO credencialesUsuariosDTO)
         {
             var usuario = await userManager.FindByEmailAsync(credencialesUsuariosDTO.Email);
@@ -82,6 +79,7 @@ namespace BibliotecaAPI.Controllers
         }
 
         [HttpGet("renovar-token")]
+        [Authorize]
         public async Task<ActionResult<RespuestaAutenticacionDTO>> RenovarToken()
         {
             var usuario = await servicioUsuarios.ObtenerUsuario();
@@ -98,6 +96,36 @@ namespace BibliotecaAPI.Controllers
 
             var respuestaAutenticacion = await construirToken(credencialesUsuarioDto);
             return respuestaAutenticacion;
+        }
+
+        [HttpPost("hacer-admin")]
+        [Authorize(Policy = "esadmin")]
+        public async Task<ActionResult> HacerAdmin(EditarClaimDTO editarClaimDTO)
+        {
+            var usuario = await userManager.FindByEmailAsync(editarClaimDTO.Email);
+
+            if(usuario is null)
+            {
+                return NotFound();
+            }
+
+            await userManager.AddClaimAsync(usuario, new Claim("esadmin", "true"));
+            return NoContent();
+        }
+
+        [HttpPost("remover-admin")]
+        [Authorize(Policy = "esadmin")]
+        public async Task<ActionResult> RemoverAdmin(EditarClaimDTO editarClaimDTO)
+        {
+            var usuario = await userManager.FindByEmailAsync(editarClaimDTO.Email);
+
+            if (usuario is null)
+            {
+                return NotFound();
+            }
+
+            await userManager.RemoveClaimAsync(usuario, new Claim("esadmin", "true"));
+            return NoContent();
         }
 
         private ActionResult RetornarLoginIncorrecto()
