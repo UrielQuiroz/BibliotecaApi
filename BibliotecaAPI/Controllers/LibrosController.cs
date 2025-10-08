@@ -2,6 +2,7 @@
 using BibliotecaAPI.Datos;
 using BibliotecaAPI.DTOs;
 using BibliotecaAPI.Entidades;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
@@ -10,6 +11,7 @@ namespace BibliotecaAPI.Controllers
 {
     [ApiController]
     [Route("api/libros")]
+    [Authorize]
     public class LibrosController : Controller
     {
         private readonly ApplicationDbContext context;
@@ -21,6 +23,7 @@ namespace BibliotecaAPI.Controllers
             this.mapper = mapper;
         }
 
+        [AllowAnonymous]
         public async Task<IEnumerable<LibroDTO>> Get()
         {
             var libros = await context.Libros.ToListAsync();
