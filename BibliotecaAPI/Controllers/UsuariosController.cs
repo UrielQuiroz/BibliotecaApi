@@ -1,4 +1,5 @@
 ﻿using BibliotecaAPI.DTOs;
+using BibliotecaAPI.Entidades;
 using BibliotecaAPI.Servicios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,15 +15,15 @@ namespace BibliotecaAPI.Controllers
     [Route("api/usuarios")]
     public class UsuariosController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<Usuario> userManager;
         private readonly IConfiguration configuration;
-        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly SignInManager<Usuario> signInManager;
         private readonly IServicioUsuarios servicioUsuarios;
 
         public UsuariosController(
-            UserManager<IdentityUser> userManager, 
+            UserManager<Usuario> userManager, 
             IConfiguration configuration, 
-            SignInManager<IdentityUser> signInManager,
+            SignInManager<Usuario> signInManager,
             IServicioUsuarios servicioUsuarios)
         {
             this.userManager = userManager;
@@ -34,7 +35,7 @@ namespace BibliotecaAPI.Controllers
         [HttpPost("registro")]
         public async Task<ActionResult<RespuestaAutenticacionDTO>> Registrar(CredencialesUsuariosDTO credencialesUsuariosDTO)
         {
-            var usuario = new IdentityUser
+            var usuario = new Usuario
             {
                 UserName = credencialesUsuariosDTO.Email,
                 Email = credencialesUsuariosDTO.Email
@@ -76,6 +77,23 @@ namespace BibliotecaAPI.Controllers
             {
                 return RetornarLoginIncorrecto();
             }
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult> Put(ActualizarUsuarioDTO actualizarUsuarioDTO)
+        {
+            var usuario = await servicioUsuarios.ObtenerUsuario();
+
+            if(usuario is null)
+            {
+                return NotFound();
+            }
+
+            usuario.FechaNacimiento = actualizarUsuarioDTO.FechaNacimiento;
+
+            await userManager.UpdateAsync(usuario);
+            return NoContent();
         }
 
         [HttpGet("renovar-token")]
