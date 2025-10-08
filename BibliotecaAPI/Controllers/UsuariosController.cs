@@ -16,11 +16,13 @@ namespace BibliotecaAPI.Controllers
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly IConfiguration configuration;
+        private readonly SignInManager<IdentityUser> signInManager;
 
-        public UsuariosController(UserManager<IdentityUser> userManager, IConfiguration configuration)
+        public UsuariosController(UserManager<IdentityUser> userManager, IConfiguration configuration, SignInManager<IdentityUser> signInManager)
         {
             this.userManager = userManager;
             this.configuration = configuration;
+            this.signInManager = signInManager;
         }
 
         [HttpPost("registro")]
@@ -48,6 +50,34 @@ namespace BibliotecaAPI.Controllers
 
                 return ValidationProblem();
             }
+        }
+
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<ActionResult<RespuestaAutenticacionDTO>> Login(CredencialesUsuariosDTO credencialesUsuariosDTO)
+        {
+            var usuario = await userManager.FindByEmailAsync(credencialesUsuariosDTO.Email);
+
+            if(usuario is null)
+            {
+                return RetornarLoginIncorrecto();
+            }
+
+            var resultado = await signInManager.CheckPasswordSignInAsync(usuario, credencialesUsuariosDTO.Password, lockoutOnFailure: false);
+
+            if (resultado.Succeeded)
+            {
+                return await construirToken(credencialesUsuariosDTO);
+            } else
+            {
+                return RetornarLoginIncorrecto();
+            }
+        }
+
+        private ActionResult RetornarLoginIncorrecto()
+        {
+            ModelState.AddModelError(string.Empty, "Login incorrecto");
+            return ValidationProblem();
         }
 
         private async Task<RespuestaAutenticacionDTO> construirToken(CredencialesUsuariosDTO credencialesUsuariosDTO)
