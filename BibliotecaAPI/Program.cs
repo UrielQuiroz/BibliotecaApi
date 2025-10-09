@@ -12,6 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 //Area de servicios
 
+
+#region Encriptacion
+
+//Configuracion de encriptacion de datos
+builder.Services.AddDataProtection();
+
+#endregion
+
 var origenerPermitidos = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()!;
 
 builder.Services.AddCors(options =>
