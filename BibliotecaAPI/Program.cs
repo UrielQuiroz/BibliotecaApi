@@ -18,7 +18,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(optionsCORS =>
     {
-        optionsCORS.WithOrigins(origenerPermitidos).AllowAnyMethod().AllowAnyHeader();
+        optionsCORS.WithOrigins(origenerPermitidos).AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("mi-cabecera");
     });
 });
 
@@ -69,6 +69,12 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 //Area de middlewares
+
+app.Use(async (contexto, next) =>
+{
+    contexto.Response.Headers.Append("mi-cabecera", "valor");
+    await next();
+});
 
 app.UseCors();
 
