@@ -12,6 +12,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 //Area de servicios
 
+var origenerPermitidos = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()!;
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(optionsCORS =>
+    {
+        optionsCORS.WithOrigins(origenerPermitidos).AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
 builder.Services.AddAutoMapper(typeof(Program));
 
 //builder.Services.AddControllers().AddJsonOptions(options =>
@@ -59,6 +69,8 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 //Area de middlewares
+
+app.UseCors();
 
 app.MapControllers();
 
