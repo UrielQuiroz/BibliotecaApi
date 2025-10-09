@@ -3,6 +3,7 @@ using BibliotecaAPI.Datos;
 using BibliotecaAPI.DTOs;
 using BibliotecaAPI.Entidades;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
@@ -16,14 +17,42 @@ namespace BibliotecaAPI.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
+        private readonly ITimeLimitedDataProtector protectorLimitadoPorTiempo;
 
-        public LibrosController(ApplicationDbContext context, IMapper mapper)
+        public LibrosController(ApplicationDbContext context, IMapper mapper, IDataProtectionProvider protectionProvider)
         {
             this.context = context;
             this.mapper = mapper;
+            protectorLimitadoPorTiempo = protectionProvider.CreateProtector("LibrosController").ToTimeLimitedDataProtector();
         }
 
+        [HttpGet("listado/obtener-token")]
         [AllowAnonymous]
+        public ActionResult ObtenerToken()
+        {
+            var textoPlano =Guid.NewGuid().ToString();
+            var token = protectorLimitadoPorTiempo.Protect(textoPlano, lifetime: TimeSpan.FromSeconds(30));
+            var url = Url.RouteUrl("ObtenerListadoLibrosUsandoToken", new { token }, "https");
+            return Ok(new { url });
+        }
+
+        [HttpGet("listado/{token}", Name = "ObtenerListadoLibrosUsandoToken")]
+        public async Task<ActionResult> ObtenerListadoUsandoToken(string token)
+        {
+            try
+            {
+                protectorLimitadoPorTiempo.Unprotect(token);
+            }
+            catch
+            {
+                ModelState.AddModelError(string.Empty, "El token ha expirado");
+                return ValidationProblem();
+            }
+            var libros = await context.Libros.ToListAsync();
+            var librosDTO = mapper.Map<IEnumerable<LibroDTO>>(libros);
+            return Ok(librosDTO);
+        }
+
         public async Task<IEnumerable<LibroDTO>> Get()
         {
             var libros = await context.Libros.ToListAsync();
