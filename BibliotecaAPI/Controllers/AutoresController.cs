@@ -68,6 +68,70 @@ namespace BibliotecaAPI.Controllers
 
         }
 
+        [HttpGet("filtrar")]
+        [AllowAnonymous]
+        public async Task<ActionResult> Filtrar([FromQuery] AutorFiltroDTO autorFiltroDTO)
+        {
+            var queryable = context.Autores.AsQueryable();
+
+            if(!string.IsNullOrEmpty(autorFiltroDTO.Nombres))
+            {
+                queryable = queryable.Where(x => x.Nombres.Contains(autorFiltroDTO.Nombres));
+            }
+
+            if(!string.IsNullOrEmpty(autorFiltroDTO.Apellidos))
+            {
+                queryable = queryable.Where(x => x.Apellidos.Contains(autorFiltroDTO.Apellidos));
+            }
+
+            if(autorFiltroDTO.IncluirLibros)
+            {
+                queryable = queryable.Include(x => x.Libros).ThenInclude(x => x.Libro);
+            }
+
+            if(autorFiltroDTO.TieneFoto.HasValue)
+            {
+                if(autorFiltroDTO.TieneFoto.Value)
+                {
+                    queryable = queryable.Where(x => x.Foto != null);
+                } else
+                {
+                    queryable = queryable.Where(x => x.Foto == null);
+                }
+            }
+
+            if(autorFiltroDTO.TieneLibros.HasValue)
+            {
+                if(autorFiltroDTO.TieneLibros.Value)
+                {
+                    queryable = queryable.Where(x => x.Libros.Any());
+                } else
+                {
+                    queryable = queryable.Where(x => !x.Libros.Any());
+                }
+            }
+
+            if(!string.IsNullOrEmpty(autorFiltroDTO.TituloLibro))
+            {
+                queryable = queryable.Where(x => x.Libros.Any(y => y.Libro!.Titulo.Contains(autorFiltroDTO.TituloLibro)));
+            }
+
+            var autores = await queryable
+                            .OrderBy(x => x.Nombres)
+                            .Paginar(autorFiltroDTO.PaginacionDTO).ToListAsync();
+
+            if(autorFiltroDTO.IncluirLibros)
+            {
+                var autorConLibrosDTO = mapper.Map<IEnumerable<AutorConLibrosDTO>>(autores);
+                return Ok(autorConLibrosDTO);
+            } else
+            {
+                var autoresDTO = mapper.Map<IEnumerable<AutorDTO>>(autores);
+                return Ok(autoresDTO);
+            }
+               
+        }
+
         [HttpPost]
         public async Task<ActionResult> Post(AutorCreateDTO autorCreateDTO)
         {
