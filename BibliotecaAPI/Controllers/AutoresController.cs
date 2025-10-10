@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
+using System.Linq.Dynamic.Core;
 
 namespace BibliotecaAPI.Controllers
 {
@@ -21,13 +22,15 @@ namespace BibliotecaAPI.Controllers
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
         private readonly IAlmacenadorArchivos almacenadorArchivos;
+        private readonly ILogger<AutoresController> logger;
         private const string contenedor = "autores";
 
-        public AutoresController(ApplicationDbContext context, IMapper mapper, IAlmacenadorArchivos almacenadorArchivos)
+        public AutoresController(ApplicationDbContext context, IMapper mapper, IAlmacenadorArchivos almacenadorArchivos, ILogger<AutoresController> logger)
         {
             this.context = context;
             this.mapper = mapper;
             this.almacenadorArchivos = almacenadorArchivos;
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -116,9 +119,27 @@ namespace BibliotecaAPI.Controllers
                 queryable = queryable.Where(x => x.Libros.Any(y => y.Libro!.Titulo.Contains(autorFiltroDTO.TituloLibro)));
             }
 
+            if(!string.IsNullOrEmpty(autorFiltroDTO.CampoOrdenar))
+            {
+                var tipoOrdern = autorFiltroDTO.OrdenAscendente ? "ascending" : "descending";
+
+                try
+                {
+                    queryable = queryable.OrderBy($"{autorFiltroDTO.CampoOrdenar} {tipoOrdern}");
+                }
+                catch (Exception ex)
+                {
+                    queryable = queryable.OrderBy(x => x.Nombres);
+                    logger.LogError(ex.Message, ex);
+                }
+            } 
+            else
+            {
+                queryable = queryable.OrderBy(x => x.Nombres);
+            }
+
             var autores = await queryable
-                            .OrderBy(x => x.Nombres)
-                            .Paginar(autorFiltroDTO.PaginacionDTO).ToListAsync();
+                                .Paginar(autorFiltroDTO.PaginacionDTO).ToListAsync();
 
             if(autorFiltroDTO.IncluirLibros)
             {
