@@ -49,7 +49,6 @@ builder.Services.AddIdentityCore<Usuario>()
 builder.Services.AddScoped<UserManager<Usuario>>();
 builder.Services.AddScoped<SignInManager<Usuario>>();
 builder.Services.AddTransient<IServicioUsuarios, ServicioUsuarios>();
-builder.Services.AddTransient<IServicioHash, ServicioHash>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -78,12 +77,6 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 //Area de middlewares
-
-app.Use(async (contexto, next) =>
-{
-    contexto.Response.Headers.Append("mi-cabecera", "valor");
-    await next();
-});
 
 app.UseCors();
 
