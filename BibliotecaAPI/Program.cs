@@ -74,7 +74,19 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("esadmin", politica => politica.RequireClaim("esadmin"));
 });
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Biblioteca API",
+        Description = "Este es un web api para trabajar con datos de autores y libros",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Email = "uriel@gmail.com",
+            Name = "Uriel Quiroz"
+        }
+    });
+});
 
 var app = builder.Build();
 
