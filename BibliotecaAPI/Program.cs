@@ -14,9 +14,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 //Area de servicios
 
-builder.Services.AddOutputCache(options =>
+//builder.Services.AddOutputCache(options =>
+//{
+//    options.DefaultExpirationTimeSpan = TimeSpan.FromSeconds(60);
+//});
+
+builder.Services.AddStackExchangeRedisOutputCache(options =>
 {
-    options.DefaultExpirationTimeSpan = TimeSpan.FromSeconds(60);
+    options.Configuration = builder.Configuration.GetConnectionString("redis");
 });
 
 #region Encriptacion
