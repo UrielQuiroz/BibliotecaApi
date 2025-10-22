@@ -165,7 +165,8 @@ namespace BibliotecaAPI.Controllers
                 return Forbid();
             }
 
-            context.Remove(comentarioDB);
+            comentarioDB.EstaBorrado = true;
+            context.Update(comentarioDB);
             await context.SaveChangesAsync();
 
             return NoContent();
