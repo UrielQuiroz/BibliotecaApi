@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOutputCache(options =>
 {
-    options.DefaultExpirationTimeSpan = TimeSpan.FromSeconds(15);
+    options.DefaultExpirationTimeSpan = TimeSpan.FromSeconds(60);
 });
 
 #region Encriptacion

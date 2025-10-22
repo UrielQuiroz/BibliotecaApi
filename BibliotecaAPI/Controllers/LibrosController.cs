@@ -20,16 +20,19 @@ namespace BibliotecaAPI.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
+        private readonly IOutputCacheStore outputCacheStore;
+        private const string cache = "libros-obtener";
 
-        public LibrosController(ApplicationDbContext context, IMapper mapper)
+        public LibrosController(ApplicationDbContext context, IMapper mapper, IOutputCacheStore outputCacheStore)
         {
             this.context = context;
             this.mapper = mapper;
+            this.outputCacheStore = outputCacheStore;
         }
 
         [HttpGet]
         [AllowAnonymous]
-        [OutputCache]
+        [OutputCache(Tags = [cache])]
         public async Task<IEnumerable<LibroDTO>> Get([FromQuery] PaginacionDTO paginacionDTO)
         {
             var queryable = context.Libros.AsQueryable();
@@ -43,7 +46,7 @@ namespace BibliotecaAPI.Controllers
 
         [HttpGet("{id:int}", Name = "ObtenerLibro")]
         [AllowAnonymous]
-        [OutputCache]
+        [OutputCache(Tags = [cache])]
         public async Task<ActionResult<LibroConAutoresDTO>> Get(int id)
         {
             var libro = await context.Libros
@@ -89,6 +92,7 @@ namespace BibliotecaAPI.Controllers
 
             context.Add(libro);
             await context.SaveChangesAsync();
+            await outputCacheStore.EvictByTagAsync(cache, default);
 
             var libroDTO = mapper.Map<LibroDTO>(libro);
 
@@ -142,19 +146,22 @@ namespace BibliotecaAPI.Controllers
             AsignarOrdenAutores(libroDB);
 
             await context.SaveChangesAsync();
+            await outputCacheStore.EvictByTagAsync(cache, default);
             return Ok();
         }
 
-        //[HttpDelete("{id:int}")]
-        //public async Task<ActionResult> Delete(int id)
-        //{
-        //    var registrosBorrados = await context.Libros.Where(x => x.Id == id).ExecuteDeleteAsync();
-        //    if(registrosBorrados == 0)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var registrosBorrados = await context.Libros.Where(x => x.Id == id).ExecuteDeleteAsync();
+            if (registrosBorrados == 0)
+            {
+                return NotFound();
+            }
 
-        //    return Ok();
-        //}
+            await outputCacheStore.EvictByTagAsync(cache, default);
+
+            return Ok();
+        }
     }
 }
