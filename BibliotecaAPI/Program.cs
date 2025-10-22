@@ -14,6 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 //Area de servicios
 
+builder.Services.AddOutputCache(options =>
+{
+    options.DefaultExpirationTimeSpan = TimeSpan.FromSeconds(15);
+});
 
 #region Encriptacion
 
@@ -127,6 +131,8 @@ app.UseSwaggerUI();
 app.UseStaticFiles();
 
 app.UseCors();
+
+app.UseOutputCache();
 
 app.MapControllers();
 
