@@ -51,6 +51,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<FiltroTiempoEjecucion>();
+    options.Conventions.Add(new ConvencionAgruparPorVersion());
 }).AddNewtonsoftJson();
 
 builder.Services.AddDbContext<ApplicationDbContext>( options => 
@@ -98,6 +99,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
+        Version = "v1",
         Title = "Biblioteca API",
         Description = "Este es un web api para trabajar con datos de autores y libros",
         Contact = new Microsoft.OpenApi.Models.OpenApiContact
@@ -105,6 +107,24 @@ builder.Services.AddSwaggerGen(options =>
             Email = "uriel@gmail.com",
             Name = "Uriel Quiroz"
         }
+    });
+
+    options.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Version = "v2",
+        Title = "Biblioteca API",
+        Description = "Este es un web api para trabajar con datos de autores y libros",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Email = "uriel@gmail.com",
+            Name = "Uriel Quiroz"
+        }
+    });
+
+    options.DocInclusionPredicate((documentName, apiDescription) =>
+    {
+        var groupName = apiDescription.GroupName?.ToLower();
+        return groupName == documentName.ToLower();
     });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -162,7 +182,12 @@ app.UseExceptionHandler(exceptionHandlerApp => exceptionHandlerApp.Run(async con
 }));
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Biblioteca API V1");
+    options.SwaggerEndpoint("/swagger/v2/swagger.json", "Biblioteca API V2");
+});
+
 
 app.UseStaticFiles();
 
