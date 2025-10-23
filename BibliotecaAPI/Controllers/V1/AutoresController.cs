@@ -13,10 +13,10 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.Linq.Dynamic.Core;
 
-namespace BibliotecaAPI.Controllers
+namespace BibliotecaAPI.Controllers.V1
 {
     [ApiController]
-    [Route("api/autores")]
+    [Route("api/v1/autores")]
     [Authorize(Policy = "esadmin")]
     [FiltroAgregarCabeceras("controlador", "autores")]
     public class AutoresController : ControllerBase
@@ -49,7 +49,6 @@ namespace BibliotecaAPI.Controllers
         [FiltroAgregarCabeceras("accion", "obtener-autores")]
         public async Task<IEnumerable<AutorDTO>> Get([FromQuery] PaginacionDTO paginacionDTO)
         {
-            throw new NotImplementedException();
             var queryable = context.Autores.AsQueryable();
             await HttpContext.InsertarParametrosPaginacionEnCabecera(queryable);
             var autores = await queryable
@@ -60,7 +59,7 @@ namespace BibliotecaAPI.Controllers
         }
 
 
-        [HttpGet("{id:int}", Name = "ObtenerAutor"),]  //api/autores/id
+        [HttpGet("{id:int}", Name = "ObtenerAutorV1"),]  //api/autores/id
         [AllowAnonymous]
         [EndpointSummary("Obtiene autor por ID")]
         [EndpointDescription("Obtiene un autor por su ID. Incluye sus libros. Si el autor no existe, retorna un 404")]
@@ -175,7 +174,7 @@ namespace BibliotecaAPI.Controllers
             await context.SaveChangesAsync();
             await outputCacheStore.EvictByTagAsync(cache, default);
             var autorDTO = mapper.Map<AutorDTO>(autor);
-            return CreatedAtRoute("ObtenerAutor", new { id = autor.Id}, autorDTO);
+            return CreatedAtRoute("ObtenerAutorV1", new { id = autor.Id}, autorDTO);
         }
 
         [HttpPost("con-foto")]
@@ -193,7 +192,7 @@ namespace BibliotecaAPI.Controllers
             await context.SaveChangesAsync();
             await outputCacheStore.EvictByTagAsync(cache, default);
             var autorDTO = mapper.Map<AutorDTO>(autor);
-            return CreatedAtRoute("ObtenerAutor", new { id = autor.Id}, autorDTO);
+            return CreatedAtRoute("ObtenerAutorV1", new { id = autor.Id}, autorDTO);
         }
 
         [HttpPut("{id:int}")]

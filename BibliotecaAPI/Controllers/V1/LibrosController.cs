@@ -11,10 +11,10 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Linq;
 
-namespace BibliotecaAPI.Controllers
+namespace BibliotecaAPI.Controllers.V1
 {
     [ApiController]
-    [Route("api/libros")]
+    [Route("api/v1/libros")]
     [Authorize(Policy = "esadmin")]
     public class LibrosController : Controller
     {
@@ -44,7 +44,7 @@ namespace BibliotecaAPI.Controllers
             return librosDTO;
         }
 
-        [HttpGet("{id:int}", Name = "ObtenerLibro")]
+        [HttpGet("{id:int}", Name = "ObtenerLibroV1")]
         [AllowAnonymous]
         [OutputCache(Tags = [cache])]
         public async Task<ActionResult<LibroConAutoresDTO>> Get(int id)
@@ -78,7 +78,7 @@ namespace BibliotecaAPI.Controllers
 
             var libroDTO = mapper.Map<LibroDTO>(libro);
 
-            return CreatedAtRoute("ObtenerLibro", new { id = libro.Id }, libroDTO);
+            return CreatedAtRoute("ObtenerLibroV1", new { id = libro.Id }, libroDTO);
         }
 
         private void AsignarOrdenAutores(Libro libro)
