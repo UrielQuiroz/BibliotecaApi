@@ -47,7 +47,10 @@ builder.Services.AddAutoMapper(typeof(Program));
 //builder.Services.AddControllers().AddJsonOptions(options =>
 //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
-builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<FiltroTiempoEjecucion>();
+}).AddNewtonsoftJson();
 
 builder.Services.AddDbContext<ApplicationDbContext>( options => 
     options.UseSqlServer("name=DefaultConnection"));
