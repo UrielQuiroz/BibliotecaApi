@@ -66,6 +66,7 @@ builder.Services.AddScoped<SignInManager<Usuario>>();
 builder.Services.AddTransient<IServicioUsuarios, ServicioUsuarios>();
 builder.Services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
 builder.Services.AddScoped<MiFiltroDeAccion>();
+builder.Services.AddScoped<FiltroValidacionLibro>();
 
 builder.Services.AddHttpContextAccessor();
 
