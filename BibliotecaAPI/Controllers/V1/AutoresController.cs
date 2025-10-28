@@ -78,8 +78,34 @@ namespace BibliotecaAPI.Controllers.V1
 
             var autorDTO = mapper.Map<AutorConLibrosDTO>(autor);
 
+            GenerarEnlaces(autorDTO);
+
             return autorDTO;
 
+        }
+
+        private void GenerarEnlaces(AutorDTO autorDTO)
+        {
+            autorDTO.Enlaces.Add(new DatosHATEOASDTO(
+                Enlace: Url.Link("ObtenerAutorV1", new { id = autorDTO.Id })!,
+                Descripcion: "self",
+                Metodo: "GET"
+            ));
+            autorDTO.Enlaces.Add(new DatosHATEOASDTO(
+                Enlace: Url.Link("ActualizarAutorV1", new { id = autorDTO.Id })!,
+                Descripcion: "autor-actualizar",
+                Metodo: "PUT"
+            ));
+            autorDTO.Enlaces.Add(new DatosHATEOASDTO(
+                Enlace: Url.Link("PatchAutorV1", new { })!,
+                Descripcion: "autor-patch",
+                Metodo: "PATCH"
+            ));
+            autorDTO.Enlaces.Add(new DatosHATEOASDTO(
+                Enlace: Url.Link("BorrarAutorV1", new { })!,
+                Descripcion: "autor-borrar",
+                Metodo: "DELETE"
+            ));
         }
 
         [HttpGet("filtrar", Name = "FiltrarAutoresV1")]
