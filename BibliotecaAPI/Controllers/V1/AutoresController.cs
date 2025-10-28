@@ -52,34 +52,39 @@ namespace BibliotecaAPI.Controllers.V1
         //[OutputCache(Tags = [cache])]
         [ServiceFilter<MiFiltroDeAccion>()]
         [FiltroAgregarCabeceras("accion", "obtener-autores")]
-        public async Task<ColeccionDeRecursosDTO<AutorDTO>> Get([FromQuery] PaginacionDTO paginacionDTO)
+        public async Task<ActionResult> Get([FromQuery] PaginacionDTO paginacionDTO, [FromQuery] bool incluirHATEOAS = false)
         {
             var dtos =  await servicioAutoresV1.Get(paginacionDTO);
 
-            foreach (var dto in dtos)
+            if(incluirHATEOAS)
             {
-                GenerarEnlaces(dto);
+                foreach (var dto in dtos)
+                {
+                    GenerarEnlaces(dto);
+                }
+
+                var result = new ColeccionDeRecursosDTO<AutorDTO> { Valores = dtos };
+
+                result.Enlaces.Add(new DatosHATEOASDTO(
+                    Enlace: Url.Link("ObtenerAutorV1", new { })!,
+                    Descripcion: "self",
+                    Metodo: "GET"
+                ));
+                result.Enlaces.Add(new DatosHATEOASDTO(
+                    Enlace: Url.Link("CrearAutorV1", new { })!,
+                    Descripcion: "autor-crear",
+                    Metodo: "POST"
+                ));
+                result.Enlaces.Add(new DatosHATEOASDTO(
+                    Enlace: Url.Link("CrearAutorConFotoV1", new { })!,
+                    Descripcion: "autor-crear-con-foto",
+                    Metodo: "POST"
+                ));
+
+                return Ok(result);
             }
 
-            var result = new ColeccionDeRecursosDTO<AutorDTO> { Valores = dtos };
-
-            result.Enlaces.Add(new DatosHATEOASDTO(
-                Enlace: Url.Link("ObtenerAutorV1", new { })!,
-                Descripcion: "self",
-                Metodo: "GET"
-            ));
-            result.Enlaces.Add(new DatosHATEOASDTO(
-                Enlace: Url.Link("CrearAutorV1", new { })!,
-                Descripcion: "autor-crear",
-                Metodo: "POST"
-            ));
-            result.Enlaces.Add(new DatosHATEOASDTO(
-                Enlace: Url.Link("CrearAutorConFotoV1", new { })!,
-                Descripcion: "autor-crear-con-foto",
-                Metodo: "POST"
-            ));
-
-            return result;
+            return Ok(dtos);
         }
 
 
