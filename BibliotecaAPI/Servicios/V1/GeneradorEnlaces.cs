@@ -17,6 +17,41 @@ namespace BibliotecaAPI.Servicios.V1
             this.httpContextAccessor = httpContextAccessor;
         }
 
+        public async Task<ColeccionDeRecursosDTO<AutorDTO>> GenerarEnlaces(List<AutorDTO> autores)
+        {
+            var result = new ColeccionDeRecursosDTO<AutorDTO> { Valores = autores };
+
+            var usuario = httpContextAccessor.HttpContext!.User;
+            var esAdmin = await authorizationService.AuthorizeAsync(usuario, "esadmin");
+
+            foreach (var dto in autores)
+            {
+                GenerarEnlaces(dto, esAdmin.Succeeded);
+            }
+
+            result.Enlaces.Add(new DatosHATEOASDTO(
+                Enlace: linkGenerator.GetUriByRouteValues(httpContextAccessor.HttpContext!, "ObtenerAutorV1", new { })!,
+                Descripcion: "self",
+                Metodo: "GET"
+            ));
+
+            if(esAdmin.Succeeded)
+            {
+                result.Enlaces.Add(new DatosHATEOASDTO(
+                    Enlace: linkGenerator.GetUriByRouteValues(httpContextAccessor.HttpContext!, "CrearAutorV1", new { })!,
+                    Descripcion: "autor-crear",
+                    Metodo: "POST"
+                ));
+                result.Enlaces.Add(new DatosHATEOASDTO(
+                    Enlace: linkGenerator.GetUriByRouteValues(httpContextAccessor.HttpContext!, "CrearAutorConFotoV1", new { })!,
+                    Descripcion: "autor-crear-con-foto",
+                    Metodo: "POST"
+                ));
+            }
+
+            return result;
+        }
+
         public async Task GenerarEnlaces(AutorDTO autorDTO)
         {
             var usuario = httpContextAccessor.HttpContext!.User;
