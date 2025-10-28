@@ -7,6 +7,7 @@ using BibliotecaAPI.Migrations;
 using BibliotecaAPI.Servicios;
 using BibliotecaAPI.Servicios.V1;
 using BibliotecaAPI.Utilidades;
+using BibliotecaAPI.Utilidades.V1;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -94,7 +95,8 @@ namespace BibliotecaAPI.Controllers.V1
         [EndpointDescription("Obtiene un autor por su ID. Incluye sus libros. Si el autor no existe, retorna un 404")]
         [ProducesResponseType<AutorConLibrosDTO>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
- 
+
+        [ServiceFilter<HATEOASAutorAttribute>()]
         public async Task<ActionResult<AutorConLibrosDTO>> Get([Description("El ID del Autor")]int id)
         {
             var autor = await context.Autores
@@ -108,8 +110,6 @@ namespace BibliotecaAPI.Controllers.V1
             }
 
             var autorDTO = mapper.Map<AutorConLibrosDTO>(autor);
-
-            GenerarEnlaces(autorDTO);
 
             return autorDTO;
 
