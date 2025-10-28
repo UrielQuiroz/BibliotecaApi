@@ -40,12 +40,12 @@ namespace BibliotecaAPI.Servicios.V1
                     Metodo: "PUT"
                 ));
                 autorDTO.Enlaces.Add(new DatosHATEOASDTO(
-                    Enlace: linkGenerator.GetUriByRouteValues(httpContextAccessor.HttpContext!, "PatchAutorV1", new { })!,
+                    Enlace: linkGenerator.GetUriByRouteValues(httpContextAccessor.HttpContext!, "PatchAutorV1", new { id = autorDTO.Id })!,
                     Descripcion: "autor-patch",
                     Metodo: "PATCH"
                 ));
                 autorDTO.Enlaces.Add(new DatosHATEOASDTO(
-                    Enlace: linkGenerator.GetUriByRouteValues(httpContextAccessor.HttpContext!, "BorrarAutorV1", new { })!,
+                    Enlace: linkGenerator.GetUriByRouteValues(httpContextAccessor.HttpContext!, "BorrarAutorV1", new { id = autorDTO.Id })!,
                     Descripcion: "autor-borrar",
                     Metodo: "DELETE"
                 ));
