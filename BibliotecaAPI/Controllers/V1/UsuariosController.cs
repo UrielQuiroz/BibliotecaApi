@@ -41,7 +41,7 @@ namespace BibliotecaAPI.Controllers.V1
             this.mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "ObtenerUsuariosV1")]
         [Authorize(Policy = "esadmin")]
         public async Task<IEnumerable<UsuarioDTO>> Get()
         {
@@ -50,7 +50,7 @@ namespace BibliotecaAPI.Controllers.V1
             return usuariosDTO;
         }
 
-        [HttpPost("registro")]
+        [HttpPost("registro", Name = "RegistrarUsuarioV1")]
         public async Task<ActionResult<RespuestaAutenticacionDTO>> Registrar(CredencialesUsuariosDTO credencialesUsuariosDTO)
         {
             var usuario = new Usuario
@@ -76,7 +76,7 @@ namespace BibliotecaAPI.Controllers.V1
             }
         }
 
-        [HttpPost("login")]
+        [HttpPost("login", Name = "LoginUsuarioV1")]
         public async Task<ActionResult<RespuestaAutenticacionDTO>> Login(CredencialesUsuariosDTO credencialesUsuariosDTO)
         {
             var usuario = await userManager.FindByEmailAsync(credencialesUsuariosDTO.Email);
@@ -97,7 +97,7 @@ namespace BibliotecaAPI.Controllers.V1
             }
         }
 
-        [HttpPut]
+        [HttpPut(Name = "ActualizarUsuarioV1")]
         [Authorize]
         public async Task<ActionResult> Put(ActualizarUsuarioDTO actualizarUsuarioDTO)
         {
@@ -114,7 +114,7 @@ namespace BibliotecaAPI.Controllers.V1
             return NoContent();
         }
 
-        [HttpGet("renovar-token")]
+        [HttpGet("renovar-token", Name = "RenovarTokenV1")]
         [Authorize]
         public async Task<ActionResult<RespuestaAutenticacionDTO>> RenovarToken()
         {

@@ -46,7 +46,7 @@ namespace BibliotecaAPI.Controllers.V1
             this.servicioAutoresV1 = servicioAutoresV1;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "ObtenerAutoresV1")]
         [AllowAnonymous]
         //[OutputCache(Tags = [cache])]
         [ServiceFilter<MiFiltroDeAccion>()]
@@ -82,7 +82,7 @@ namespace BibliotecaAPI.Controllers.V1
 
         }
 
-        [HttpGet("filtrar")]
+        [HttpGet("filtrar", Name = "FiltrarAutoresV1")]
         [AllowAnonymous]
         public async Task<ActionResult> Filtrar([FromQuery] AutorFiltroDTO autorFiltroDTO)
         {
@@ -164,7 +164,7 @@ namespace BibliotecaAPI.Controllers.V1
                
         }
 
-        [HttpPost]
+        [HttpPost(Name = "CrearAutorV1")]
         public async Task<ActionResult> Post(AutorCreateDTO autorCreateDTO)
         {
             var autor = mapper.Map<Autor>(autorCreateDTO);
@@ -175,7 +175,7 @@ namespace BibliotecaAPI.Controllers.V1
             return CreatedAtRoute("ObtenerAutorV1", new { id = autor.Id}, autorDTO);
         }
 
-        [HttpPost("con-foto")]
+        [HttpPost("con-foto", Name = "CrearAutorConFotoV1")]
         public async Task<ActionResult> PostConFoto([FromForm] AutorCreacionDTOConFoto autorCreateDTO)
         {
             var autor = mapper.Map<Autor>(autorCreateDTO);
@@ -193,7 +193,7 @@ namespace BibliotecaAPI.Controllers.V1
             return CreatedAtRoute("ObtenerAutorV1", new { id = autor.Id}, autorDTO);
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:int}", Name = "ActualizarAutorV1")]
         public async Task<ActionResult> Put(int id, [FromForm] AutorCreacionDTOConFoto autorCreateDTO)
         {
             var existeAutor = await context.Autores.AnyAsync(x => x.Id == id);
@@ -221,7 +221,7 @@ namespace BibliotecaAPI.Controllers.V1
             return Ok();
         }
 
-        [HttpPatch("{id:int}")]
+        [HttpPatch("{id:int}", Name = "PatchAutorV1")]
         public async Task<ActionResult> Patch(int id, JsonPatchDocument<AutorPatchDTO> patchDoc)
         {
             if (patchDoc is null)
@@ -253,7 +253,7 @@ namespace BibliotecaAPI.Controllers.V1
 
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}", Name = "BorrarAutorV1")]
         public async Task<ActionResult> Delete(int id)
         {
             var autor = await context.Autores.FirstOrDefaultAsync(x => x.Id == id);
